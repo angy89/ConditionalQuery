@@ -56,17 +56,22 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,queryInput,perc,minConnections,mi
 	ADJ_rank[ADJ_rank!=0] = 1
 	
 	ADJ = ADJ_rank * ADJ_rank.T
-	ADJ = ADJ * ADJ_sign
+	
+	
+	
+	NN_ADJ = ADJ * ADJ_sign
 	
 	#We are not interested in connections between two elements of the same class
-	ADJ[np.ix_(indices['nano'],indices['nano'])]=0
-	ADJ[np.ix_(indices['drug'],indices['drug'])]=0
-	ADJ[np.ix_(indices['chemical'],indices['chemical'])]=0
-	ADJ[np.ix_(indices['disease'],indices['disease'])]=0
+	NN_ADJ[np.ix_(indices['nano'],indices['nano'])]=0
+	NN_ADJ[np.ix_(indices['drug'],indices['drug'])]=0
+	NN_ADJ[np.ix_(indices['chemical'],indices['chemical'])]=0
+	NN_ADJ[np.ix_(indices['disease'],indices['disease'])]=0
 
 	#Since rankings are not simmetric, we look for mutual neighborhood
 #	NN_ADJ = ADJ * ADJ.T
-	NN_ADJ = ADJ
+#	NN_ADJ = ADJ
+	
+	
 	#We remove elements not connected to at least minConnections query element
 	QI = [item for sublist in queryInput.values() for item in sublist]
 
@@ -90,12 +95,15 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,queryInput,perc,minConnections,mi
 	NN_ADJ_red = NN_ADJ[np.ix_(neigIndex,neigIndex)]
 	
 	nEdges = np.count_nonzero(NN_ADJ_red)/2
-	
+	nVertices = NN_ADJ_red.shape[0]
+
 	if(nEdges>1000000):
 		print 'Too many edges in the network'
 		return None
 	
-	nVertices = NN_ADJ_red.shape[0]
+	
+	#CONTROLLARE SE GLI INDICI SONO BUONI, PERCHè IVICA TROVA UN NUMERO DI CLIQUE DIVERSE DALLE TUE!
+	
 	
 	#nanoOrigin contains the indices of the nanos in the original matrix
 	nanoOrigin = list(set(neigIndex).intersection(set(indices['nano'])))

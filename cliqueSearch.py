@@ -154,7 +154,7 @@ def searchClique_3(NN_ADJ_red,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDis
 						cliques_index = (nanoIndex,diseaseIndex,chemicalIndex) #create the clique
 						cliques_names = (elemName[nanoIndex],elemName[diseaseIndex],elemName[chemicalIndex])
 						cliques_edges = (ADJ_sign[nanoIndex,diseaseIndex],ADJ_sign[nanoIndex,chemicalIndex],ADJ_sign[diseaseIndex,chemicalIndex])
-						cliques_NDiC.add((cliques_index,cliques_names,cliques_edges)) #NANO-DISEASE-CHEMICAL #add the clique in the right list
+						cliques_NDC.add((cliques_index,cliques_names,cliques_edges)) #NANO-DISEASE-CHEMICAL #add the clique in the right list
 						drug_adj = NN_ADJ_red[chemicalPos[cc],drug]!=0 
 						drug_adj = [d for d,b in zip(disease, drug_adj) if b]
 						for dd in range(len(drug_adj)):
@@ -212,6 +212,7 @@ def checkClique_one(queryInput,clique):
 		if(clique[i] in QI):
 			return True
 	return False
+
 
 
 #It looks for all cliques of four element between the input elements

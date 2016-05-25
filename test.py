@@ -31,6 +31,33 @@ if __name__=='__main__':
 	#Query:  Rotenone: 2562, amantadine:47 
 	#2929
 	
+	perc = 0.01
+	print 'Test 2: Testing cliqueSearch function'
+	queryInput = {'nano':indices['nano'],'drug':indices['drug'],'disease':[],'chemical':[]}
+	minConnections = 2
+	minElems=2
+	CQ = ConditionalQuery(np.copy(ADJ_rank),ADJ_sign,indices,queryInput,perc,minConnections,minElems,elemName)
+	print 'End Test 2'
+	
+	CQ2 = CQ['cliques']
+	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[0][0],list(CQ2['NanoDrugDisease'])[0][0])]
+	ADJ_sign[np.ix_(list(CQ2['NanoDrugDiseaseChemical'])[0][0],list(CQ2['NanoDrugDiseaseChemical'])[0][0])]
+
+	nElem = np.ceil(ADJ_rank.shape[0] * perc)
+	ADJ_rank[np.ix_(list(CQ2['NanoDrugDiseaseChemical'])[0][0],list(CQ2['NanoDrugDiseaseChemical'])[0][0])] < nElem
+
+	if minElems==4:
+		print 'Nano - Drug - Disease - Chemical: {}'.format(len(list(CQ2['NanoDrugDiseaseChemical'])))
+	else:
+		print 'Vertices in the network: {}'.format(len(list(CQ['nodes']))) 
+		print 'Edges in the network {}'.format(len(list(CQ['edges']))) 
+
+		print 'Nano - Drug - Disease - Chemical: {}'.format(len(list(CQ2['NanoDrugDiseaseChemical']))) 
+		print 'Nano - Drug - Disease: {}'.format(len(list(CQ2['NanoDrugDisease'])))
+		print 'Nano - Drug  - Chemical: {}'.format(len(list(CQ2['NanoDrugChemical'])))
+		print 'Nano  - Disease - Chemical: {}'.format(len(list(CQ2['NanoDiseaseChemical'])))
+		print 'Drug - Disease - Chemical: {}'.format(len(list(CQ2['DrugDiseaseChemical'])))
+	
 	perc = 0.1
 	print 'Test 2: Testing cliqueSearch function'
 	queryInput = {'nano':[0,9,20],'drug':[325,46],'disease':[3309],'chemical':[2087,2561]}

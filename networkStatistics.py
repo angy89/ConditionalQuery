@@ -1,68 +1,80 @@
+import numpy as np
+
 def networkStatistics(NN_ADJ_red,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,nanoOrigin,drugOrigin,diseaseOrigin,chemicalOrigin,queryInput,elemName):
-	nanoPos = [] #nanoPos contains the indices in the submatrix of the original nano in the query
-	for i in range(len(queryInput['nano'])):
-		nanoPos.append(nano[nanoOrigin.index(queryInput['nano'][i])])
-	drugPos = []
-	for i in range(len(queryInput['drug'])):
-		drugPos.append(drug[drugOrigin.index(queryInput['drug'][i])])
-	diseasePos = []
-	for i in range(len(queryInput['disease'])):
-		diseasePos.append(disease[diseaseOrigin.index(queryInput['disease'][i])])
-	chemicalPos = []
-	for i in range(len(queryInput['chemical'])):
-		chemicalPos.append(chemical[chemicalOrigin.index(queryInput['chemical'][i])])
-	
-	
 	nodes = []
-	for nn in range(len(nanoPos)):
-		nanoIndex = nanoOrigin[nano.index(nanoPos[nn])]
+	for nn in range(len(nano)):
+		nanoIndex = nanoIndex = nanoOrigin[nn]
 		nodes.append({'id':nanoIndex,'label':elemName[nanoIndex],'type':'nano'})
 		
-	for dd in range(len(drugPos)):
-		drugIndex = drugOrigin[drug.index(drugPos[dd])]
+	for dd in range(len(drug)):
+		drugIndex = drugOrigin[dd]
 		nodes.append({'id':drugIndex,'label':elemName[drugIndex],'type':'drug'})
 
-	for di in range(len(diseasePos)):
-		diseaseIndex = diseaseOrigin[disease.index(diseasePos[di])]
+	for di in range(len(disease)):
+		diseaseIndex = diseaseOrigin[di]
 		nodes.append({'id':diseaseIndex,'label':elemName[diseaseIndex],'type':'disease'})
 
-	for cc in range(len(chemicalPos)):
-		chemicalIndex = chemicalOrigin[chemical.index(chemicalPos[cc])]	
+	for cc in range(len(chemical)):
+		chemicalIndex = chemicalOrigin[cc]	
 		nodes.append({'id':chemicalIndex,'label':elemName[chemicalIndex],'type':'chemical'})
 	
 	edges = []
 	
-	for nn in range(len(nanoPos)):
-		nanoIndex = nanoOrigin[nano.index(nanoPos[nn])]
-		for dd in range(len(drugPos)):
-			drugIndex = drugOrigin[drug.index(drugPos[dd])]
-			nano_drug = NN_ADJ_red[nanoPos[nn],drugPos[dd]]!=0
+	nnz = np.tril(NN_ADJ_red).nonzero()
+	
+	for row,col in zip(nnz[0],nnz[1]): 
+		if row in nano:
+			source = nanoOrigin[nano.index(row)]
+		elif row in drug:
+			source = drugOrigin[drug.index(row)]
+		elif row in disease:
+			source = diseaseOrigin[disease.index(row)]
+		else:
+			source = chemicalOrigin[chemical.index(row)]		
+	
+		if col in nano:
+			target = nanoOrigin[nano.index(col)]
+		elif col in drug:
+			target = drugOrigin[drug.index(col)]
+		elif col in disease:
+			target = diseaseOrigin[disease.index(col)]
+		else:
+			target = chemicalOrigin[chemical.index(col)]		
+	
+		edges.append({'source':source,'target':target,'weight':ADJ_sign[source,target]})
+	
+	'''
+	for nn in range(len(nano)):
+		nanoIndex = nanoOrigin[nn]
+		for dd in range(len(drug)):
+			drugIndex = drugOrigin[dd]
+			nano_drug = NN_ADJ_red[nano[nn],drug[dd]]!=0
 			if(nano_drug):
 				edges.append({'source':nanoIndex,'target':drugIndex,'weight':ADJ_sign[nanoIndex,drugIndex]})
 			for di in range(len(diseasePos)):
-				diseaseIndex = diseaseOrigin[disease.index(diseasePos[di])]
-				nano_disease = NN_ADJ_red[nanoPos[nn],diseasePos[di]]!=0
+				diseaseIndex = diseaseOrigin[di]
+				nano_disease = NN_ADJ_red[nano[nn],disease[di]]!=0
 				
 				if(nano_disease):
-					edges.append({'source':nanoIndex,'target':diseaseIndex,'weight':ADJ_sign[nanoIndex,drugIndex]})
+					edges.append({'source':nanoIndex,'target':diseaseIndex,'weight':ADJ_sign[nanoIndex,diseaseIndex]})
 				
-				drug_disease = NN_ADJ_red[drugPos[dd],diseasePos[di]]!=0
+				drug_disease = NN_ADJ_red[drug[dd],disease[di]]!=0
 				if(drug_disease):
 					edges.append({'source':drugIndex,'target':diseaseIndex,'weight':ADJ_sign[drugIndex,diseaseIndex]})
-				for cc in range(len(chemicalPos)):
-					chemicalIndex = chemicalOrigin[chemical.index(chemicalPos[cc])]	
+				for cc in range(len(chemical)):
+					chemicalIndex = chemicalOrigin[cc]	
 					
-					nano_chemical = NN_ADJ_red[nanoPos[nn],chemicalPos[cc]]!=0
+					nano_chemical = NN_ADJ_red[nano[nn],chemical[cc]]!=0
 					if(nano_chemical):
 						edges.append({'source':nanoIndex,'target':chemicalIndex,'weight':ADJ_sign[nanoIndex,chemicalIndex]})
 					
-					drug_chemical = NN_ADJ_red[drugPos[dd],chemicalPos[cc]]!=0
+					drug_chemical = NN_ADJ_red[drug[dd],chemical[cc]]!=0
 					if(drug_chemical):
 						edges.append({'source':drugIndex,'target':chemicalIndex,'weight':ADJ_sign[drugIndex,chemicalIndex]})
 					
-					disease_chemical = NN_ADJ_red[diseasePos[di],chemicalPos[cc]]!=0
+					disease_chemical = NN_ADJ_red[disease[di],chemical[cc]]!=0
 					if(disease_chemical):
 						edges.append({'source':diseaseIndex,'target':chemicalIndex,'weight':ADJ_sign[diseaseIndex,chemicalIndex]})
-					
+	 '''				
 	NodeEdges = {'nodes':nodes,'edges':edges}
 	return(NodeEdges)
