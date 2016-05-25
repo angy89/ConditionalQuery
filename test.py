@@ -47,7 +47,6 @@ if __name__=='__main__':
 	print 'End Test 1'
 	
 	perc = 0.4
-	
 	print 'Test 3: Testing searchClique_2 function (drug-disease)'
 	queryInput = {'nano':[],'drug':[325],'disease':[3309],'chemical':[]}
 	minConnections = 2

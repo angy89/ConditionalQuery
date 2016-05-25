@@ -116,7 +116,7 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,queryInput,perc,minConnections,mi
 	disease = range(len(nano)+len(drug)+len(chemical),len(nano)+len(drug)+len(chemical)+len(diseaseOrigin))
 
 	
-	NS = networkStatistics(NN_ADJ_red,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,nanoOrigin,drugOrigin,diseaseOrigin,chemicalOrigin,queryInput,elemName)
+	NS = networkStatistics(np.copy(NN_ADJ_red),ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,nanoOrigin,drugOrigin,diseaseOrigin,chemicalOrigin,queryInput,elemName)
 	
 	if minElems == 4: #look for all quadruple of object in the input (one element for each class) and see if the form a clique
 		print '4 minElems'
