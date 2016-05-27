@@ -4,7 +4,7 @@ from cliqueSearch import checkClique_one
 from cliqueSearch import clique4
 from cliqueSearch import searchClique_3
 from cliqueSearch import searchClique_2
-from networkStatistics import networkStatistics
+#from networkStatistics import networkStatistics
 
 #INPUT:
 #	* ADJ_rank is the matrix of the ranking
@@ -58,6 +58,12 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,indicesBool,queryInput,perc,minCo
 	NN_ADJ[np.ix_(indices['chemical'],indices['chemical'])]=0
 	NN_ADJ[np.ix_(indices['disease'],indices['disease'])]=0
 
+	indici = [elemName.index('ZnO9'),elemName.index('midecamycin'),elemName.index('Adenoma, Liver Cell')]
+	NN_ADJ[np.ix_(indici,indici)]
+
+	indici = [elemName.index('AuNP'),elemName.index('flumequine'),elemName.index('11-keto-boswellic acid')]
+	NN_ADJ[np.ix_(indici,indici)]
+
 	QI = [item for sublist in queryInput.values() for item in sublist]
 
 	submatrix = NN_ADJ[QI,]
@@ -81,7 +87,7 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,indicesBool,queryInput,perc,minCo
 		return None
 	
 	
-	NS = networkStatistics(NN_ADJ,ADJ_sign,neigIndex,indices,nano,drug,chemical,disease,queryInput,elemName)
+	#NS = networkStatistics(NN_ADJ,ADJ_sign,neigIndex,indices,nano,drug,chemical,disease,queryInput,elemName)
 	
 	if minElems == 4: #look for all quadruple of object in the input (one element for each class) and see if the form a clique
 		print '4 minElems'		
@@ -98,7 +104,7 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,indicesBool,queryInput,perc,minCo
 	if minElems == 2:
 		print 'minElems = 2'
 		CS2 = searchClique_2(NN_ADJ,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,queryInput,elemName)
-		Res2 = {'cliques':CS2,'nodes':NS['nodes'], 'edges':NS['edges']} 
+		Res2 = {'cliques':CS2['Cliques'],'nodes':CS2['NS']['nodes'], 'edges':CS2['NS']['edges']} 
 		return Res2
 
 	if minElems==1: #if minElems==1 I have to search for all the cliques

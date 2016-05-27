@@ -10,6 +10,12 @@ if __name__=='__main__':
 	#colnames of ADJ are in the order nano-drug-chemical-disease
 	#ADJ2 = np.loadtxt('../data/ADJ_perc2.txt',delimiter=',')
 	
+	import numpy as np
+	import itertools as it
+	import igraph
+	import time
+	from ConditionalQuery import ConditionalQuery
+
 	ADJ_rank = np.loadtxt('../data/ADJ_rank.txt',delimiter=',')
 	ADJ_sign = np.loadtxt('../data/ADJ_sign.txt',delimiter=',')
 		
@@ -44,6 +50,38 @@ if __name__=='__main__':
 	#Parkinson Disease:3310, levodopa:326, 1-Methyl-4-phenyl-1,2,3,6-tetrahydropyridine:2088
 	#Query:  Rotenone: 2562, amantadine:47 
 	#2929
+
+	perc = 0.01
+	print 'Test 2: Testing cliqueSearch function'
+	queryInput = {'nano':indices['nano'],'drug':indices['drug'],'disease':[],'chemical':[]}
+	minConnections = 2
+	minElems=2
+	CQ = ConditionalQuery(np.copy(ADJ_rank),ADJ_sign,indices,indicesBool,queryInput,perc,minConnections,minElems,elemName)
+	print 'End Test 2'
+	
+	CQ2 = CQ['cliques']
+	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[0][0],list(CQ2['NanoDrugDisease'])[0][0])]
+	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[1][0],list(CQ2['NanoDrugDisease'])[1][0])]
+	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[2][0],list(CQ2['NanoDrugDisease'])[2][0])]
+
+	ADJ_sign[np.ix_(list(CQ2['NanoDrugDisease'])[0][0],list(CQ2['NanoDrugDisease'])[0][0])]
+
+	nElem = np.ceil(ADJ_rank.shape[0] * perc)
+	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[0][0],list(CQ2['NanoDrugDisease'])[0][0])] < nElem
+
+	if minElems==4:
+		print 'Nano - Drug - Disease - Chemical: {}'.format(len(list(CQ2['NanoDrugDiseaseChemical'])))
+	else:
+		print 'Vertices in the network: {}'.format(len(list(CQ['nodes']))) 
+		print 'Edges in the network {}'.format(len(list(CQ['edges']))) 
+
+		print 'Nano - Drug - Disease - Chemical: {}'.format(len(list(CQ2['NanoDrugDiseaseChemical']))) 
+		print 'Nano - Drug - Disease: {}'.format(len(list(CQ2['NanoDrugDisease'])))
+		print 'Nano - Drug  - Chemical: {}'.format(len(list(CQ2['NanoDrugChemical'])))
+		print 'Nano  - Disease - Chemical: {}'.format(len(list(CQ2['NanoDiseaseChemical'])))
+		print 'Drug - Disease - Chemical: {}'.format(len(list(CQ2['DrugDiseaseChemical'])))
+
+
 
 	#	
 	perc = 0.4
@@ -437,41 +475,6 @@ if __name__=='__main__':
 		print 'Nano - Drug  - Chemical: {}'.format(len(list(CQ2['NanoDrugChemical'])))
 		print 'Nano  - Disease - Chemical: {}'.format(len(list(CQ2['NanoDiseaseChemical'])))
 		print 'Drug - Disease - Chemical: {}'.format(len(list(CQ2['DrugDiseaseChemical'])))
-
-	
-	perc = 0.05
-	print 'Test 2: Testing cliqueSearch function'
-	queryInput = {'nano':indices['nano'],'drug':indices['drug'],'disease':[],'chemical':[]}
-	minConnections = 2
-	minElems=2
-	CQ = ConditionalQuery(np.copy(ADJ_rank),ADJ_sign,indices,indicesBool,queryInput,perc,minConnections,minElems,elemName)
-	print 'End Test 2'
-	
-	CQ2 = CQ['cliques']
-	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[0][0],list(CQ2['NanoDrugDisease'])[0][0])]
-	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[1][0],list(CQ2['NanoDrugDisease'])[1][0])]
-	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[2][0],list(CQ2['NanoDrugDisease'])[2][0])]
-
-	ADJ_sign[np.ix_(list(CQ2['NanoDrugDisease'])[0][0],list(CQ2['NanoDrugDisease'])[0][0])]
-
-	nElem = np.ceil(ADJ_rank.shape[0] * perc)
-	ADJ_rank[np.ix_(list(CQ2['NanoDrugDisease'])[0][0],list(CQ2['NanoDrugDisease'])[0][0])] < nElem
-
-	if minElems==4:
-		print 'Nano - Drug - Disease - Chemical: {}'.format(len(list(CQ2['NanoDrugDiseaseChemical'])))
-	else:
-		print 'Vertices in the network: {}'.format(len(list(CQ['nodes']))) 
-		print 'Edges in the network {}'.format(len(list(CQ['edges']))) 
-
-		print 'Nano - Drug - Disease - Chemical: {}'.format(len(list(CQ2['NanoDrugDiseaseChemical']))) 
-		print 'Nano - Drug - Disease: {}'.format(len(list(CQ2['NanoDrugDisease'])))
-		print 'Nano - Drug  - Chemical: {}'.format(len(list(CQ2['NanoDrugChemical'])))
-		print 'Nano  - Disease - Chemical: {}'.format(len(list(CQ2['NanoDiseaseChemical'])))
-		print 'Drug - Disease - Chemical: {}'.format(len(list(CQ2['DrugDiseaseChemical'])))
-	
-	
-	indici = [elemName.index('ZnO9'),elemName.index('midecamycin'),elemName.index('Adenoma, Liver Cell')]
-	ADJ_rank[np.ix_(indici,indici)]
 	
 	perc = 0.4
 	print 'Test 3: Testing searchClique_2 function (drug-disease)'

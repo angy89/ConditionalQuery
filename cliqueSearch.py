@@ -236,13 +236,27 @@ def checkClique_one(queryInput,clique):
 #It looks for all cliques of four element between the input elements
 def clique4(NN_ADJ,ADJ_sign,queryInput,elemName):
 	print 'In clique4 function'
+	#Cliques Search obj
 	cliques_NDrDiC = set()
-	
-	
 	nano = queryInput['nano']
 	drug = queryInput['drug']
 	disease = queryInput['disease']
 	chemical = queryInput['chemical']
+	
+	#Subnetwork obj
+	nodes = set()
+	edges = set()
+	
+	node_color = {}
+	node_color['nano'] = '#ff0000'
+	node_color['drug'] = '#0000ff'
+	node_color['chemical'] = '#00ff00'
+	node_color['disease'] = '#ff00ff'
+	
+	pEdgeCol = '#ff9999'
+	nEdgeCol = '#99ff99'
+
+	eIdx = 1
 	
 	
 	for nn in range(len(nano)):
@@ -266,8 +280,32 @@ def clique4(NN_ADJ,ADJ_sign,queryInput,elemName):
 							#Clique Edges are in the order: nano-drug,nano-disease,nano-chem,drug-disea,drug-chem,disea-chem
 							cliques_edges = (ADJ_sign[nanoIndex,drugIndex],ADJ_sign[nanoIndex,diseaseIndex],ADJ_sign[nanoIndex,chemicalIndex],ADJ_sign[drugIndex,diseaseIndex],ADJ_sign[drugIndex,chemicalIndex],ADJ_sign[diseaseIndex,chemicalIndex])
 							cliques_NDrDiC.add((cliques_index,cliques_names,cliques_edges)) #Clique NANO-DRUG-DISEASE-CHEMICAL
-
-	Cliques = {'NanoDrugDiseaseChemical':cliques_NDrDiC}
+							
+							nodes.append({'id': nanoIndex, 'label': elemName[nanoIndex], 'size': 1, 'color': node_color['nano'],'type':'nano','x': random.randint(0, 1000), 'y': random.randint(0, 1000)})
+							nodes.append({'id': drugIndex, 'label': elemName[drugIndex], 'size': 1, 'color': node_color['drug'],'type':'drug','x': random.randint(0, 1000), 'y': random.randint(0, 1000)})
+							nodes.append({'id': diseaseIndex, 'label': elemName[diseaseIndex], 'size': 1, 'color': node_color['disease'],'type':'disease','x': random.randint(0, 1000), 'y': random.randint(0, 1000)})
+							nodes.append({'id': chemicalIndex, 'label': elemName[chemicalIndex], 'size': 1, 'color': node_color['chemical'],'type':'chemical','x': random.randint(0, 1000), 'y': random.randint(0, 1000)})
+	
+							edges.add({'id':eIdx, 'source': nanoIndex, 'type': 'curvedArrow', 'target': drugIndex, 'color': pEdgeCol if ADJ_sign[nanoIndex,drugIndex]>0 else nEdgeCol,'weight':ADJ_sign[nanoIndex,drugIndex]})
+							eIdx +=1
+							
+							edges.add({'id':eIdx, 'source': nanoIndex, 'type': 'curvedArrow', 'target': diseaseIndex, 'color': pEdgeCol if ADJ_sign[nanoIndex,diseaseIndex]>0 else nEdgeCol,'weight':ADJ_sign[nanoIndex,diseaseIndex]})
+							eIdx +=1
+							
+							edges.add({'id':eIdx, 'source': nanoIndex, 'type': 'curvedArrow', 'target': chemicalIndex, 'color': pEdgeCol if ADJ_sign[nanoIndex,chemicalIndex]>0 else nEdgeCol,'weight':ADJ_sign[nanoIndex,chemicalIndex]})
+							eIdx +=1
+							
+							edges.add({'id':eIdx, 'source': drugIndex, 'type': 'curvedArrow', 'target': diseaseIndex, 'color': pEdgeCol if ADJ_sign[drugIndex,diseaseIndex]>0 else nEdgeCol,'weight':ADJ_sign[drugIndex,diseaseIndex]})
+							eIdx +=1
+							
+							edges.add({'id':eIdx, 'source': drugIndex, 'type': 'curvedArrow', 'target': chemicalIndex, 'color': pEdgeCol if ADJ_sign[drugIndex,chemicalIndex]>0 else nEdgeCol,'weight':ADJ_sign[drugIndex,chemicalIndex]})
+							eIdx +=1
+							
+							edges.add({'id':eIdx, 'source': diseaseIndex, 'type': 'curvedArrow', 'target': chemicalIndex, 'color': pEdgeCol if ADJ_sign[diseaseIndex,chemicalIndex]>0 else nEdgeCol,'weight':ADJ_sign[diseaseIndex,chemicalIndex]})
+							eIdx +=1
+							
+							
+	Cliques = {'NanoDrugDiseaseChemical':cliques_NDrDiC, 'cliqueNodes':node, 'cliqueEdges': edges}
 	return Cliques
 
 #Clique Search looks for all different kind of cliques in the subnetwork; 
