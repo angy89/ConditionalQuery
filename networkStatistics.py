@@ -1,48 +1,52 @@
 import numpy as np
 
-def networkStatistics(NN_ADJ_red,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,nanoOrigin,drugOrigin,diseaseOrigin,chemicalOrigin,queryInput,elemName):
+def networkStatistics(NN_ADJ,ADJ_sign,neigIndex,indices,nano,drug,chemical,disease,queryInput,elemName):
 	nodes = []
-	for nn in range(len(nano)):
-		nanoIndex = nanoIndex = nanoOrigin[nn]
-		nodes.append({'id':nanoIndex,'label':elemName[nanoIndex],'type':'nano'})
+	for nn in range(len(indices['nano'])):
+		if(nano[indices['nano'][nn]]):
+			nodes.append({'id':indices['nano'][nn],'label':elemName[indices['nano'][nn]],'type':'nano'})
 		
-	for dd in range(len(drug)):
-		drugIndex = drugOrigin[dd]
-		nodes.append({'id':drugIndex,'label':elemName[drugIndex],'type':'drug'})
+	for dd in range(len(indices['drug'])):
+		if(drug[indices['drug'][dd]]):
+			nodes.append({'id':indices['drug'][dd],'label':elemName[indices['drug'][dd]],'type':'drug'})
 
-	for di in range(len(disease)):
-		diseaseIndex = diseaseOrigin[di]
-		nodes.append({'id':diseaseIndex,'label':elemName[diseaseIndex],'type':'disease'})
-
-	for cc in range(len(chemical)):
-		chemicalIndex = chemicalOrigin[cc]	
-		nodes.append({'id':chemicalIndex,'label':elemName[chemicalIndex],'type':'chemical'})
+	for di in range(len(indices['disease'])):
+		if(disease[indices['disease'][di]]):
+			nodes.append({'id':indices['disease'][di],'label':elemName[indices['disease'][di]],'type':'disease'})
+			
+	for cc in range(len(indices['chemical'])):
+		if(chemical[indices['chemical'][cc]]):
+			nodes.append({'id':indices['chemical'][cc],'label':elemName[indices['chemical'][cc]],'type':'chemical'})
 	
 	edges = []
-	
-	nnz = np.tril(NN_ADJ_red).nonzero()
+
+	nnz = np.tril(NN_ADJ).nonzero()
 	
 	for row,col in zip(nnz[0],nnz[1]): 
-		if row in nano:
-			source = nanoOrigin[nano.index(row)]
-		elif row in drug:
-			source = drugOrigin[drug.index(row)]
-		elif row in disease:
-			source = diseaseOrigin[disease.index(row)]
-		else:
-			source = chemicalOrigin[chemical.index(row)]		
+		source = target = None
+		if nano[row]:
+			source = row
+		elif drug[row]:
+			source = row
+		elif disease[row]:
+			source = row
+		elif chemical[row]:
+			source = row
 	
-		if col in nano:
-			target = nanoOrigin[nano.index(col)]
-		elif col in drug:
-			target = drugOrigin[drug.index(col)]
-		elif col in disease:
-			target = diseaseOrigin[disease.index(col)]
-		else:
-			target = chemicalOrigin[chemical.index(col)]		
+		if nano[col]:
+			target = col
+		elif drug[col]:
+			target = col
+		elif disease[col]:
+			target = col
+		elif chemical[col]:
+			target = col
 	
-		edges.append({'source':source,'target':target,'weight':ADJ_sign[source,target]})
-	
+		if(source is not None and target is not None):
+			d={'source':source,'target':target,'weight':ADJ_sign[source,target]}
+			#print d
+			edges.append(d)
+
 	'''
 	for nn in range(len(nano)):
 		nanoIndex = nanoOrigin[nn]

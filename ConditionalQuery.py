@@ -31,7 +31,87 @@ from networkStatistics import networkStatistics
 #		* "NanoDiseaseChemical" nano-disease nano-chemical disease-chemical
 #		* "DrugDiseaseChemical" drug-disease drug-chemical disease-chemical
 
-def ConditionalQuery(ADJ_rank,ADJ_sign,indices,queryInput,perc,minConnections,minElems,elemName):
+def ConditionalQuery(ADJ_rank,ADJ_sign,indices,indicesBool,queryInput,perc,minConnections,minElems,elemName):
+	nClassQuery = sum([len(c)!=0 for c in queryInput.itervalues()])
+	nNanoInput = len(queryInput['nano'])
+	nDrugInput = len(queryInput['drug'])
+	nChemicalInput = len(queryInput['chemical'])
+	nDiseaseInput = len(queryInput['disease'])
+	
+	#The number of minelems displayed in the final clique must be comprised between 1 and the number of classes represented in the query.
+	#It can't be more than 4
+	if(minElems > nClassQuery):#Should I raise an exception here?
+		print 'The number of minElems must be less the the number of different classes represented in the input'
+		return None
+	
+	#Removing all the connection that are higher that the percentile we want
+	#ADJ[ADJ>=perc] = 0
+	nElem = np.ceil(ADJ_rank.shape[0] * perc)
+	ADJ_rank[ADJ_rank>nElem] = 0
+	ADJ_rank[ADJ_rank!=0] = 1
+	ADJ = ADJ_rank * ADJ_rank.T
+	NN_ADJ = ADJ * ADJ_sign
+	
+	#We are not interested in connections between two elements of the same class
+	NN_ADJ[np.ix_(indices['nano'],indices['nano'])]=0
+	NN_ADJ[np.ix_(indices['drug'],indices['drug'])]=0
+	NN_ADJ[np.ix_(indices['chemical'],indices['chemical'])]=0
+	NN_ADJ[np.ix_(indices['disease'],indices['disease'])]=0
+
+	QI = [item for sublist in queryInput.values() for item in sublist]
+
+	submatrix = NN_ADJ[QI,]
+	submatrix[submatrix!=0]=1
+	colSum = submatrix.sum(axis=0)
+
+	neigIndex = colSum>=minConnections
+	neigIndex[QI] = True #We don't remove the query items from the subnetwork
+	
+	nano = neigIndex & indicesBool['nano']
+	drug = neigIndex & indicesBool['drug']
+	disease = neigIndex & indicesBool['disease']
+	chemical = neigIndex & indicesBool['chemical']
+	
+	#nEdges = len(np.tril(NN_ADJ[np.ix_(neigIndex,neigIndex)]).nonzero()[0])
+	nEdges = np.count_nonzero(NN_ADJ[np.ix_(neigIndex,neigIndex)])/2
+	nVertices = np.sum(neigIndex)
+
+	if(nEdges>1000000):
+		print 'Too many edges in the network'
+		return None
+	
+	
+	NS = networkStatistics(NN_ADJ,ADJ_sign,neigIndex,indices,nano,drug,chemical,disease,queryInput,elemName)
+	
+	if minElems == 4: #look for all quadruple of object in the input (one element for each class) and see if the form a clique
+		print '4 minElems'		
+		CS4 = clique4(NN_ADJ,ADJ_sign,queryInput,elemName)
+		Res4 = {'cliques':CS4,'nodes':NS['nodes'], 'edges':NS['edges']} 
+		return Res4
+		
+	if minElems == 3:
+		print '3 minElems'
+		CS3 = searchClique_3(NN_ADJ,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,queryInput,elemName)
+		Res3 = {'cliques':CS3,'nodes':NS['nodes'], 'edges':NS['edges']} 
+		return Res3
+
+	if minElems == 2:
+		print 'minElems = 2'
+		CS2 = searchClique_2(NN_ADJ,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,queryInput,elemName)
+		Res2 = {'cliques':CS2,'nodes':NS['nodes'], 'edges':NS['edges']} 
+		return Res2
+
+	if minElems==1: #if minElems==1 I have to search for all the cliques
+		print '1 minElems'
+		#CS = cliqueSearch(NN_ADJ_red,ADJ_sign,nano,drug,chemical,disease,nanoOrigin,drugOrigin,diseaseOrigin,chemicalOrigin,queryInput,elemName)
+		CS = cliqueSearch(NN_ADJ,ADJ_sign,nano,drug,disease,chemical,queryInput,elemName)
+		Res = {'cliques':CS,'nodes':NS['nodes'], 'edges':NS['edges']} 
+		return Res
+	
+	return None
+
+	
+	'''
 	nClassQuery = sum([len(c)!=0 for c in queryInput.itervalues()])
 	nNanoInput = len(queryInput['nano'])
 	nDrugInput = len(queryInput['drug'])
@@ -54,11 +134,7 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,queryInput,perc,minConnections,mi
 	nElem = np.ceil(ADJ_rank.shape[0] * perc)
 	ADJ_rank[ADJ_rank>nElem] = 0
 	ADJ_rank[ADJ_rank!=0] = 1
-	
 	ADJ = ADJ_rank * ADJ_rank.T
-	
-	
-	
 	NN_ADJ = ADJ * ADJ_sign
 	
 	#We are not interested in connections between two elements of the same class
@@ -102,9 +178,7 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,queryInput,perc,minConnections,mi
 		return None
 	
 	
-	#CONTROLLARE SE GLI INDICI SONO BUONI, PERCHè IVICA TROVA UN NUMERO DI CLIQUE DIVERSE DALLE TUE!
-	
-	
+	#Controllare gli indici, Ivica trova un nro diverso di cliques dalle tue
 	#nanoOrigin contains the indices of the nanos in the original matrix
 	nanoOrigin = list(set(neigIndex).intersection(set(indices['nano'])))
 	nanoOrigin = np.sort(nanoOrigin).tolist() #I need to sort them, because in the submatrix are ordered increasingly
@@ -123,7 +197,6 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,queryInput,perc,minConnections,mi
 	diseaseOrigin = np.sort(diseaseOrigin).tolist()
 	disease = range(len(nano)+len(drug)+len(chemical),len(nano)+len(drug)+len(chemical)+len(diseaseOrigin))
 
-	
 	NS = networkStatistics(np.copy(NN_ADJ_red),ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,nanoOrigin,drugOrigin,diseaseOrigin,chemicalOrigin,queryInput,elemName)
 	
 	if minElems == 4: #look for all quadruple of object in the input (one element for each class) and see if the form a clique
@@ -151,7 +224,7 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,queryInput,perc,minConnections,mi
 		return Res
 	
 	return None
-
+	'''
 
 
 
