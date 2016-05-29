@@ -4,7 +4,7 @@ from cliqueSearch import checkClique_one
 from cliqueSearch import clique4
 from cliqueSearch import searchClique_3
 from cliqueSearch import searchClique_2
-#from networkStatistics import networkStatistics
+from networkStatistics import networkStatistics
 
 #INPUT:
 #	* ADJ_rank is the matrix of the ranking
@@ -58,11 +58,15 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,indicesBool,queryInput,perc,minCo
 	NN_ADJ[np.ix_(indices['chemical'],indices['chemical'])]=0
 	NN_ADJ[np.ix_(indices['disease'],indices['disease'])]=0
 
-	indici = [elemName.index('ZnO9'),elemName.index('midecamycin'),elemName.index('Adenoma, Liver Cell')]
+	indici = [elemName.index('troglitazone'),elemName.index('2,4,5-trichlorophenol'),elemName.index('ZnO3')]
 	NN_ADJ[np.ix_(indici,indici)]
 
 	indici = [elemName.index('AuNP'),elemName.index('flumequine'),elemName.index('11-keto-boswellic acid')]
 	NN_ADJ[np.ix_(indici,indici)]
+	
+	indici = [elemName.index('13-hydroxy-9,11-octadecadienoic acid'),elemName.index('doxorubicin'),elemName.index('PSNP')]
+	NN_ADJ[np.ix_(indici,indici)]
+
 
 	QI = [item for sublist in queryInput.values() for item in sublist]
 
@@ -86,31 +90,32 @@ def ConditionalQuery(ADJ_rank,ADJ_sign,indices,indicesBool,queryInput,perc,minCo
 		print 'Too many edges in the network'
 		return None
 	
-	
-	#NS = networkStatistics(NN_ADJ,ADJ_sign,neigIndex,indices,nano,drug,chemical,disease,queryInput,elemName)
-	
 	if minElems == 4: #look for all quadruple of object in the input (one element for each class) and see if the form a clique
 		print '4 minElems'		
 		CS4 = clique4(NN_ADJ,ADJ_sign,queryInput,elemName)
+		NS = networkStatistics(CS4,ADJ_sign,indicesBool,elemName)
 		Res4 = {'cliques':CS4,'nodes':NS['nodes'], 'edges':NS['edges']} 
 		return Res4
 		
 	if minElems == 3:
 		print '3 minElems'
 		CS3 = searchClique_3(NN_ADJ,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,queryInput,elemName)
+		NS =  networkStatistics(CS3,ADJ_sign,indicesBool,elemName)
 		Res3 = {'cliques':CS3,'nodes':NS['nodes'], 'edges':NS['edges']} 
 		return Res3
 
 	if minElems == 2:
 		print 'minElems = 2'
 		CS2 = searchClique_2(NN_ADJ,ADJ_sign,nNanoInput,nDrugInput,nChemicalInput,nDiseaseInput,nano,drug,chemical,disease,queryInput,elemName)
-		Res2 = {'cliques':CS2['Cliques'],'nodes':CS2['NS']['nodes'], 'edges':CS2['NS']['edges']} 
+		NS =  networkStatistics(CS2,ADJ_sign,indicesBool,elemName)
+		Res2 = {'cliques':CS2,'nodes':NS['nodes'], 'edges':NS['edges']} 
 		return Res2
 
 	if minElems==1: #if minElems==1 I have to search for all the cliques
 		print '1 minElems'
 		#CS = cliqueSearch(NN_ADJ_red,ADJ_sign,nano,drug,chemical,disease,nanoOrigin,drugOrigin,diseaseOrigin,chemicalOrigin,queryInput,elemName)
 		CS = cliqueSearch(NN_ADJ,ADJ_sign,nano,drug,disease,chemical,queryInput,elemName)
+		NS =  networkStatistics(CS,ADJ_sign,indicesBool,elemName)
 		Res = {'cliques':CS,'nodes':NS['nodes'], 'edges':NS['edges']} 
 		return Res
 	
