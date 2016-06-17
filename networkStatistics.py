@@ -3,7 +3,7 @@ import numpy as np
 import sys
 from collections import namedtuple
 
-Edge = namedtuple('Edge', ['id', 'source', 'type', 'target', 'color', 'weight','isKnown'])
+Edge = namedtuple('Edge', ['id','count', 'source', 'type', 'target', 'color', 'weight','isKnown'])
 Node = namedtuple('Node', ['id', 'label', 'size', 'color', 'type', 'x', 'y', 'degree'])
 
 
@@ -139,34 +139,60 @@ def NDrDiC_Net(nanoIndex, drugIndex, diseaseIndex, chemicalIndex, ADJ_sign, ADJ_
     Net[diseaseIndex, chemicalIndex] = ADJ_sign[diseaseIndex, chemicalIndex]
     Net[chemicalIndex, diseaseIndex] = ADJ_sign[diseaseIndex, chemicalIndex]
 
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=drugIndex,
-                      color=pEdgeCol if ADJ_sign[nanoIndex, drugIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[nanoIndex, drugIndex],isKnown=ADJ_known[nanoIndex,drugIndex]))
+    if ADJ_known[nanoIndex,drugIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex, color='Blue', weight=ADJ_sign[nanoIndex, drugIndex],isKnown=ADJ_known[nanoIndex,drugIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,color=pEdgeCol if ADJ_sign[nanoIndex, drugIndex] > 0 else nEdgeCol, weight=ADJ_sign[nanoIndex, drugIndex],isKnown=ADJ_known[nanoIndex,drugIndex]))
     eIdx += 1
-
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=diseaseIndex,
+    
+    if ADJ_known[nanoIndex, diseaseIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[nanoIndex, diseaseIndex],isKnown=ADJ_known[nanoIndex, diseaseIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[nanoIndex, diseaseIndex] > 0 else nEdgeCol,
                       weight=ADJ_sign[nanoIndex, diseaseIndex],isKnown=ADJ_known[nanoIndex,diseaseIndex]))
-    eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=chemicalIndex,
+    eIdx += 1
+    
+    if ADJ_known[nanoIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[nanoIndex, chemicalIndex],isKnown=ADJ_known[nanoIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[nanoIndex, chemicalIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[nanoIndex, chemicalIndex] ,isKnown=ADJ_known[nanoIndex,chemicalIndex]))
-    eIdx += 1
+                      weight=ADJ_sign[nanoIndex, chemicalIndex],isKnown=ADJ_known[nanoIndex,chemicalIndex]))
 
-    edges.append(Edge(id=eIdx, source=drugIndex, type='curvedArrow', target=diseaseIndex,
+    eIdx += 1
+    
+    if ADJ_known[drugIndex, diseaseIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[drugIndex, diseaseIndex],isKnown=ADJ_known[drugIndex, diseaseIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[drugIndex, diseaseIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[drugIndex, diseaseIndex], isKnown=ADJ_known[drugIndex,diseaseIndex]))
+                      weight=ADJ_sign[drugIndex, diseaseIndex],isKnown=ADJ_known[drugIndex, diseaseIndex]))
+    
     eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=drugIndex, type='curvedArrow', target=chemicalIndex,
+    if ADJ_known[drugIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[drugIndex, chemicalIndex],isKnown=ADJ_known[drugIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[drugIndex, chemicalIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[drugIndex, chemicalIndex], isKnown=ADJ_known[drugIndex,chemicalIndex]))
+                      weight=ADJ_sign[drugIndex, chemicalIndex],isKnown=ADJ_known[drugIndex, chemicalIndex]))
+
     eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=diseaseIndex, type='curvedArrow', target=chemicalIndex,
-                      color=pEdgeCol if ADJ_sign[diseaseIndex, chemicalIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex,chemicalIndex]))
+    if ADJ_known[diseaseIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                      color=pEdgeCol if ADJ_sign[drugIndex, chemicalIndex] > 0 else nEdgeCol,
+                      weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex, chemicalIndex]))
+
     eIdx += 1
 
     # return {'nodes': nodes, 'edges':edges, 'eIdx':eIdx}
@@ -188,19 +214,33 @@ def NDrDi_Net(nanoIndex, drugIndex, diseaseIndex, ADJ_sign,ADJ_known, eIdx, Net)
     Net[drugIndex, diseaseIndex] = ADJ_sign[drugIndex, diseaseIndex]
     Net[diseaseIndex, drugIndex] = ADJ_sign[drugIndex, diseaseIndex]
 
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=drugIndex,
+    if ADJ_known[nanoIndex,drugIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[nanoIndex, drugIndex],isKnown=ADJ_known[nanoIndex,drugIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[nanoIndex, drugIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[nanoIndex, drugIndex] ,isKnown=ADJ_known[nanoIndex,drugIndex]))
+                      weight=ADJ_sign[nanoIndex, drugIndex],isKnown=ADJ_known[nanoIndex,drugIndex]))
     eIdx += 1
-
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=diseaseIndex,
+    
+    if ADJ_known[nanoIndex, diseaseIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[nanoIndex, diseaseIndex],isKnown=ADJ_known[nanoIndex, diseaseIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[nanoIndex, diseaseIndex] > 0 else nEdgeCol,
                       weight=ADJ_sign[nanoIndex, diseaseIndex],isKnown=ADJ_known[nanoIndex,diseaseIndex]))
-    eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=drugIndex, type='curvedArrow', target=diseaseIndex,
+    eIdx += 1
+ 
+    if ADJ_known[drugIndex, diseaseIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[drugIndex, diseaseIndex],isKnown=ADJ_known[drugIndex, diseaseIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[drugIndex, diseaseIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[drugIndex, diseaseIndex],isKnown=ADJ_known[drugIndex,diseaseIndex]))
+                      weight=ADJ_sign[drugIndex, diseaseIndex],isKnown=ADJ_known[drugIndex, diseaseIndex]))
+    
     eIdx += 1
 
     # return {'nodes': nodes, 'edges':edges, 'eIdx':eIdx}
@@ -222,19 +262,33 @@ def NDrC_Net(nanoIndex, drugIndex, chemicalIndex, ADJ_sign, ADJ_known, eIdx, Net
     Net[drugIndex, chemicalIndex] = ADJ_sign[drugIndex, chemicalIndex]
     Net[chemicalIndex, drugIndex] = ADJ_sign[drugIndex, chemicalIndex]
 
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=drugIndex,
+    if ADJ_known[nanoIndex,drugIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[nanoIndex, drugIndex],isKnown=ADJ_known[nanoIndex,drugIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[nanoIndex, drugIndex] > 0 else nEdgeCol,
                       weight=ADJ_sign[nanoIndex, drugIndex],isKnown=ADJ_known[nanoIndex,drugIndex]))
     eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=chemicalIndex,
+    if ADJ_known[nanoIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[nanoIndex, chemicalIndex],isKnown=ADJ_known[nanoIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[nanoIndex, chemicalIndex] > 0 else nEdgeCol,
                       weight=ADJ_sign[nanoIndex, chemicalIndex],isKnown=ADJ_known[nanoIndex,chemicalIndex]))
+
     eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=drugIndex, type='curvedArrow', target=chemicalIndex,
+    if ADJ_known[drugIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[drugIndex, chemicalIndex],isKnown=ADJ_known[drugIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[drugIndex, chemicalIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[drugIndex, chemicalIndex],isKnown=ADJ_known[drugIndex,chemicalIndex]))
+                      weight=ADJ_sign[drugIndex, chemicalIndex],isKnown=ADJ_known[drugIndex, chemicalIndex]))
+
     eIdx += 1
 
     # return {'nodes': nodes, 'edges':edges, 'eIdx':eIdx}
@@ -256,19 +310,34 @@ def NDiC_Net(nanoIndex, diseaseIndex, chemicalIndex, ADJ_sign, ADJ_known, eIdx, 
     Net[diseaseIndex, chemicalIndex] = ADJ_sign[diseaseIndex, chemicalIndex]
     Net[chemicalIndex, diseaseIndex] = ADJ_sign[diseaseIndex, chemicalIndex]
 
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=diseaseIndex,
+    if ADJ_known[nanoIndex, diseaseIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[nanoIndex, diseaseIndex],isKnown=ADJ_known[nanoIndex, diseaseIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[nanoIndex, diseaseIndex] > 0 else nEdgeCol,
                       weight=ADJ_sign[nanoIndex, diseaseIndex],isKnown=ADJ_known[nanoIndex,diseaseIndex]))
-    eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=nanoIndex, type='curvedArrow', target=chemicalIndex,
+    eIdx += 1
+    
+    if ADJ_known[nanoIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[nanoIndex, chemicalIndex],isKnown=ADJ_known[nanoIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[nanoIndex, chemicalIndex] > 0 else nEdgeCol,
                       weight=ADJ_sign[nanoIndex, chemicalIndex],isKnown=ADJ_known[nanoIndex,chemicalIndex]))
+
     eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=diseaseIndex, type='curvedArrow', target=chemicalIndex,
-                      color=pEdgeCol if ADJ_sign[diseaseIndex, chemicalIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex,chemicalIndex]))
+    if ADJ_known[diseaseIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                      color=pEdgeCol if ADJ_sign[drugIndex, chemicalIndex] > 0 else nEdgeCol,
+                      weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex, chemicalIndex]))
+
     eIdx += 1
 
     # return {'nodes': nodes, 'edges':edges, 'eIdx':eIdx}
@@ -290,19 +359,34 @@ def DrDiC_Net(drugIndex, diseaseIndex, chemicalIndex, ADJ_sign, ADJ_known, eIdx,
     Net[diseaseIndex, chemicalIndex] = ADJ_sign[diseaseIndex, chemicalIndex]
     Net[chemicalIndex, diseaseIndex] = ADJ_sign[diseaseIndex, chemicalIndex]
 
-    edges.append(Edge(id=eIdx, source=drugIndex, type='curvedArrow', target=diseaseIndex,
+    if ADJ_known[drugIndex, diseaseIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[drugIndex, diseaseIndex],isKnown=ADJ_known[drugIndex, diseaseIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[drugIndex, diseaseIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[drugIndex, diseaseIndex],isKnown=ADJ_known[drugIndex,diseaseIndex]))
+                      weight=ADJ_sign[drugIndex, diseaseIndex],isKnown=ADJ_known[drugIndex, diseaseIndex]))
+    
     eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=drugIndex, type='curvedArrow', target=chemicalIndex,
+    if ADJ_known[drugIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[drugIndex, chemicalIndex],isKnown=ADJ_known[drugIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
                       color=pEdgeCol if ADJ_sign[drugIndex, chemicalIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[drugIndex, chemicalIndex],isKnown=ADJ_known[drugIndex,chemicalIndex]))
+                      weight=ADJ_sign[drugIndex, chemicalIndex],isKnown=ADJ_known[drugIndex, chemicalIndex]))
+
     eIdx += 1
 
-    edges.append(Edge(id=eIdx, source=diseaseIndex, type='curvedArrow', target=chemicalIndex,
-                      color=pEdgeCol if ADJ_sign[diseaseIndex, chemicalIndex] > 0 else nEdgeCol,
-                      weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex,chemicalIndex]))
+    if ADJ_known[diseaseIndex, chemicalIndex]==1:
+        edges.append(Edge(id=eIdx, count = 1, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                          color='Blue', weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex, chemicalIndex]))
+    else:
+        edges.append(Edge(id=eIdx, count = 0, source=nanoIndex, type='curvedArrow', target=drugIndex,
+                      color=pEdgeCol if ADJ_sign[drugIndex, chemicalIndex] > 0 else nEdgeCol,
+                      weight=ADJ_sign[diseaseIndex, chemicalIndex],isKnown=ADJ_known[diseaseIndex, chemicalIndex]))
+
     eIdx += 1
 
     # return {'nodes': nodes, 'edges':edges, 'eIdx':eIdx}
