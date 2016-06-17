@@ -83,7 +83,7 @@ def ConditionalQuery(ADJ_rank, ADJ_sign,ADJ_known, indices, indicesBool, queryIn
         return {
             'error': 'There are too many edges in the sub-network, please decrease the interaction threshold or remove some nodes'
         }
-    sys.stderr.write("edges in subnet: " + str(nEdges))
+    #sys.stderr.write("edges in subnet: " + str(nEdges))
 
     if minElems == 4:  # look for all quadruple of object in the input (one element for each class) and see if the form a clique
         CS4 = clique4(NN_ADJ, ADJ_sign, ADJ_known,queryInput, elemName)
