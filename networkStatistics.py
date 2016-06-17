@@ -4,7 +4,7 @@ import sys
 from collections import namedtuple
 
 Edge = namedtuple('Edge', ['id','count', 'source', 'type', 'target', 'color', 'weight','isKnown'])
-Node = namedtuple('Node', ['id', 'label', 'size', 'color', 'type', 'x', 'y', 'degree'])
+Node = namedtuple('Node', ['id', 'label', 'fixedSize', 'color', 'type', 'x', 'y', 'size'])
 
 
 def networkStatistics(CS, ADJ_sign, ADJ_known,indicesBool, elemName):
@@ -97,20 +97,20 @@ def generateNode(nodeId, indicesBool, Net, elemName):
     node = []
 
     if indicesBool['nano'][nodeId]:
-        node.append(Node(id=nodeId, label=elemName[nodeId], size=1, color=node_color['nano'], type='nano',
-                         x=random.randint(0, 1000), y=random.randint(0, 1000), degree=nodeDegree))
+        node.append(Node(id=nodeId, label=elemName[nodeId], fixedSize=1, color=node_color['nano'], type='nano',
+                         x=random.randint(0, 1000), y=random.randint(0, 1000), size=nodeDegree))
 
     if indicesBool['drug'][nodeId]:
-        node.append(Node(id=nodeId, label=elemName[nodeId], size=1, color=node_color['drug'], type='drug',
-                         x=random.randint(0, 1000), y=random.randint(0, 1000), degree=nodeDegree))
+        node.append(Node(id=nodeId, label=elemName[nodeId], fixedSize=1, color=node_color['drug'], type='drug',
+                         x=random.randint(0, 1000), y=random.randint(0, 1000), size=nodeDegree))
 
     if indicesBool['disease'][nodeId]:
-        node.append(Node(id=nodeId, label=elemName[nodeId], size=1, color=node_color['disease'], type='disease',
-                         x=random.randint(0, 1000), y=random.randint(0, 1000), degree=nodeDegree))
+        node.append(Node(id=nodeId, label=elemName[nodeId], fixedSize=1, color=node_color['disease'], type='disease',
+                         x=random.randint(0, 1000), y=random.randint(0, 1000), size=nodeDegree))
 
     if indicesBool['chemical'][nodeId]:
-        node.append(Node(id=nodeId, label=elemName[nodeId], size=1, color=node_color['chemical'], type='chemical',
-                         x=random.randint(0, 1000), y=random.randint(0, 1000), degree=nodeDegree))
+        node.append(Node(id=nodeId, label=elemName[nodeId], fixedSize=1, color=node_color['chemical'], type='chemical',
+                         x=random.randint(0, 1000), y=random.randint(0, 1000), size=nodeDegree))
 
     return node
 
