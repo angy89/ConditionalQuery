@@ -34,7 +34,7 @@ def searchNanoDrug_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disease, 
                             cliques_names = (elemName[nanoIndex], elemName[drugIndex], elemName[diseaseIndex])
                             cliques_edges = (ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, diseaseIndex],ADJ_sign[drugIndex, diseaseIndex])  # edges are in the order nano-drug, nano-disease,drug-disease
                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],ADJ_known[drugIndex, diseaseIndex])  # edges are in the order nano-drug, nano-disease,drug-disease
-                            cliques_NDrDi.add((cliques_index, cliques_names, cliques_edges,known_edges))
+                            cliques_NDrDi.add((cliques_index, cliques_names, cliques_edges,known_edges,sum(known_edges)))
                             chemical_adj = NN_ADJ[disease_adj[di], :] * chemical != 0
                             if (np.sum(chemical_adj) > 0):
                                 chemical_adj = [d for d in np.where(chemical_adj == True)[0]]
@@ -58,7 +58,7 @@ def searchNanoDrug_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disease, 
                                         ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (nano_drug & nano_chem & drug_chemical):
                                             cliques_index = (nanoIndex, drugIndex, chemicalIndex)
@@ -66,7 +66,7 @@ def searchNanoDrug_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disease, 
                                             elemName[nanoIndex], elemName[drugIndex], elemName[chemicalIndex])
                                             cliques_edges = (ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[drugIndex, chemicalIndex])
                                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[drugIndex, chemicalIndex])
-                                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-CHEMICAL
+                                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-CHEMICAL
 
                 chemical_adj = NN_ADJ[drugInput[dd], :] * chemical != 0
                 if (np.sum(chemical_adj) > 0):
@@ -80,7 +80,7 @@ def searchNanoDrug_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disease, 
                             cliques_names = (elemName[nanoIndex], elemName[drugIndex], elemName[chemicalIndex])
                             cliques_edges = (ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[drugIndex, chemicalIndex])  # edges are in the order nano-drug, nano-chemical,drug-chemical
                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[drugIndex, chemicalIndex])
-                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-CHEMICAL
+                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-CHEMICAL
                             disease_adj = NN_ADJ[chemical_adj[cc], :] * disease != 0
                             if (np.sum(disease_adj) > 0):
                                 disease_adj = [d for d in np.where(disease_adj == True)[0]]
@@ -103,7 +103,7 @@ def searchNanoDrug_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disease, 
                                         ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (nano_drug & nano_disease & drug_disease):
                                             cliques_index = (nanoIndex, drugIndex, diseaseIndex)
@@ -111,7 +111,7 @@ def searchNanoDrug_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disease, 
                                             elemName[nanoIndex], elemName[drugIndex], elemName[diseaseIndex])
                                             cliques_edges = (ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, diseaseIndex],ADJ_sign[drugIndex, diseaseIndex])
                                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],ADJ_known[drugIndex, diseaseIndex])
-                                            cliques_NDrDi.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE
+                                            cliques_NDrDi.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE
 
     Cliques = {'NanoDrugDiseaseChemical': cliques_NDrDiC, 'NanoDrugDisease': cliques_NDrDi,
                'NanoDrugChemical': cliques_NDrC, 'NanoDiseaseChemical': cliques_NDiC,
@@ -153,7 +153,7 @@ def searchNanoDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                             cliques_names = (elemName[nanoIndex], elemName[drugIndex], elemName[diseaseIndex])
                             cliques_edges = (ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, diseaseIndex],ADJ_sign[drugIndex, diseaseIndex])  # edges are in the order nano-drug, nano-disease,drug-disease
                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],ADJ_known[drugIndex, diseaseIndex])
-                            cliques_NDrDi.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE
+                            cliques_NDrDi.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE
                             chemical_adj = NN_ADJ[drug_adj[dd], :] * chemical != 0
                             if (np.sum(chemical_adj) > 0):
                                 chemical_adj = [d for d in np.where(chemical_adj == True)[0]]
@@ -175,14 +175,14 @@ def searchNanoDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE
                                         if (nano_disease & nano_chem & disease_chemical):
                                             cliques_index = (nanoIndex, diseaseIndex, chemicalIndex)
                                             cliques_names = (
                                             elemName[nanoIndex], elemName[diseaseIndex], elemName[chemicalIndex])
                                             cliques_edges = (ADJ_sign[nanoIndex, diseaseIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                                             known_edges = (ADJ_known[nanoIndex, diseaseIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DISEASE-CHEMICAL
+                                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DISEASE-CHEMICAL
 
                 chemical_adj = NN_ADJ[diseaseInput[di], :] * chemical != 0
                 if (np.sum(chemical_adj) > 0):
@@ -197,7 +197,7 @@ def searchNanoDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                             cliques_edges = (ADJ_sign[nanoIndex, diseaseIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                             # edges are in the order nano-disese, nano-chemical,disease-chemical
                             known_edges = (ADJ_known[nanoIndex, diseaseIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DISEASE-CHEMICAL
+                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DISEASE-CHEMICAL
                             drug_adj = NN_ADJ[chemical_adj[cc], :] * drug != 0
                             if (np.sum(drug_adj) > 0):
                                 drug_adj = [d for d in np.where(drug_adj == True)[0]]
@@ -220,7 +220,7 @@ def searchNanoDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (nano_disease & nano_chemical & disease_chemical):
                                             cliques_index = (nanoIndex, diseaseIndex, chemicalIndex)
@@ -228,7 +228,7 @@ def searchNanoDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                                             elemName[nanoIndex], elemName[diseaseIndex], elemName[chemicalIndex])
                                             cliques_edges = (ADJ_sign[nanoIndex, diseaseIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                                             known_edges = (ADJ_known[nanoIndex, diseaseIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DISEASE-CHEMICAL
+                                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DISEASE-CHEMICAL
 
     Cliques = {'NanoDrugDiseaseChemical': cliques_NDrDiC, 'NanoDrugDisease': cliques_NDrDi,
                'NanoDrugChemical': cliques_NDrC, 'NanoDiseaseChemical': cliques_NDiC,
@@ -272,7 +272,7 @@ def searchNanoChemical_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disea
                             # Edges are in te order nano-drug, nano-chem, drug-chem
                             cliques_edges = (ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[drugIndex, chemicalIndex])
                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[drugIndex, chemicalIndex])
-                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-CHEMICAL
+                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-CHEMICAL
 
                             disease_adj = NN_ADJ[drugIndex, :] * disease != 0
                             if (np.sum(disease_adj) > 0):
@@ -297,7 +297,7 @@ def searchNanoChemical_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disea
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (nano_disease & nano_chemical & disease_chemical):
                                             cliques_index = (nanoIndex, diseaseIndex, chemicalIndex)
@@ -305,7 +305,7 @@ def searchNanoChemical_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disea
                                             elemName[nanoIndex], elemName[diseaseIndex], elemName[chemicalIndex])
                                             cliques_edges = (ADJ_sign[nanoIndex, diseaseIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                                             known_edges = (ADJ_known[nanoIndex, diseaseIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DISEASE-CHEMICAL
+                                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DISEASE-CHEMICAL
                 disease_adj = NN_ADJ[chemicalInput[cc], :] * disease != 0
                 if (np.sum(disease_adj) > 0):
                     disease_adj = [d for d in np.where(disease_adj == True)[0]]
@@ -320,7 +320,7 @@ def searchNanoChemical_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disea
                             cliques_edges = (ADJ_sign[nanoIndex, diseaseIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                             # edges are in the order nano-disease, nano-chem, disease-chem
                             known_edges = (ADJ_known[nanoIndex, diseaseIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DISEASE-CHEMICAL
+                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DISEASE-CHEMICAL
                             drug_adj = NN_ADJ[disease_adj[di], :] * drug != 0
                             if (np.sum(drug_adj) > 0):
                                 drug_adj = [d for d in np.where(drug_adj == True)[0]]
@@ -344,7 +344,7 @@ def searchNanoChemical_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disea
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (nano_drug & nano_chemical & drug_chemical):
                                             cliques_index = (nanoIndex, drugIndex, chemicalIndex)
@@ -354,7 +354,7 @@ def searchNanoChemical_2(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, chemical, disea
                                             ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, chemicalIndex],
                                             ADJ_sign[drugIndex, chemicalIndex])
                                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[drugIndex, chemicalIndex])
-                                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-CHEMICAL
+                                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-CHEMICAL
 
     Cliques = {'NanoDrugDiseaseChemical': cliques_NDrDiC, 'NanoDrugDisease': cliques_NDrDi,
                'NanoDrugChemical': cliques_NDrC, 'NanoDiseaseChemical': cliques_NDiC,
@@ -399,7 +399,7 @@ def searchDrugDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                             # edges are in the order nano-drug, nano-disease,drug-disease
                             cliques_edges = ((ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, diseaseIndex],ADJ_sign[drugIndex, diseaseIndex]))
                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],ADJ_known[drugIndex, diseaseIndex])
-                            cliques_NDrDi.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE
+                            cliques_NDrDi.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE
                             chem_adj = NN_ADJ[nanoIndex, :] * chemical != 0
                             if (np.sum(chem_adj) > 0):
                                 chem_adj = [d for d in np.where(chem_adj == True)[0]]
@@ -424,14 +424,14 @@ def searchDrugDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (drug_disease & drug_chemical & disease_chemical):
                                             cliques_index = (drugIndex, diseaseIndex, chemicalIndex)
                                             cliques_names = (elemName[drugIndex], elemName[diseaseIndex], elemName[chemicalIndex])
                                             cliques_edges = (ADJ_sign[drugIndex, diseaseIndex], ADJ_sign[drugIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                                             known_edges = (ADJ_known[drugIndex, diseaseIndex], ADJ_known[drugIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique DRUG-DISEASE-CHEMICAL
+                                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique DRUG-DISEASE-CHEMICAL
 
                 chemical_adj = NN_ADJ[diseaseInput[di], :] * chemical != 0
                 if (np.sum(chemical_adj) > 0):
@@ -445,7 +445,7 @@ def searchDrugDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                             cliques_names = (elemName[drugIndex], elemName[diseaseIndex], elemName[chemicalIndex])
                             cliques_edges = (ADJ_sign[drugIndex, diseaseIndex], ADJ_sign[drugIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                             known_edges = (ADJ_known[drugIndex, diseaseIndex], ADJ_known[drugIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique DRUG-DISEASE-CHEMICAL
+                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique DRUG-DISEASE-CHEMICAL
 
                             nano_adj = NN_ADJ[diseaseInput[di], :] * nano != 0
                             if (np.sum(nano_adj) > 0):
@@ -469,14 +469,14 @@ def searchDrugDisease_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, diseas
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
                                         if (nano_drug & nano_disease & drug_disease):
                                             cliques_index = (nanoIndex, drugIndex, diseaseIndex)
                                             cliques_names = (
                                             elemName[nanoIndex], elemName[drugIndex], elemName[diseaseIndex])
                                             cliques_edges = (ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, diseaseIndex],ADJ_sign[drugIndex, diseaseIndex])
                                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],ADJ_known[drugIndex, diseaseIndex])
-                                            cliques_NDrDi.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE
+                                            cliques_NDrDi.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE
     Cliques = {'NanoDrugDiseaseChemical': cliques_NDrDiC, 'NanoDrugDisease': cliques_NDrDi,
                'NanoDrugChemical': cliques_NDrC, 'NanoDiseaseChemical': cliques_NDiC,
                'DrugDiseaseChemical': cliques_DrDiC}
@@ -519,7 +519,7 @@ def searchDrugChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, disea
                             cliques_edges = (ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, chemicalIndex],
                                              ADJ_sign[drugIndex, chemicalIndex])
                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[drugIndex, chemicalIndex])
-                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-CHEMICAL
+                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-CHEMICAL
 
                             disease_adj = NN_ADJ[chemicalIndex, :] * disease != 0
                             if (np.sum(disease_adj) > 0):
@@ -543,7 +543,7 @@ def searchDrugChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, disea
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (drug_disease & drug_chemical & disease_chemical):
                                             cliques_index = (drugIndex, diseaseIndex, chemicalIndex)
@@ -551,7 +551,7 @@ def searchDrugChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, disea
                                             elemName[drugIndex], elemName[diseaseIndex], elemName[chemicalIndex])
                                             cliques_edges = (ADJ_sign[drugIndex, diseaseIndex], ADJ_sign[drugIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                                             known_edges = (ADJ_known[drugIndex, diseaseIndex], ADJ_known[drugIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique DRUG-DISEASE-CHEMICAL
+                                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique DRUG-DISEASE-CHEMICAL
                 disease_adj = NN_ADJ[chemicalIndex, :] * disease != 0
                 if (np.sum(disease_adj) > 0):
                     disease_adj = [d for d in np.where(disease_adj == True)[0]]
@@ -566,7 +566,7 @@ def searchDrugChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, disea
                             cliques_edges = ((ADJ_sign[drugIndex, diseaseIndex], ADJ_sign[drugIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex]))
                             # edges are in the order dug-disease, drug-chem, disease-chem
                             known_edges = (ADJ_known[drugIndex, diseaseIndex], ADJ_known[drugIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique DRUG-DISEASE-CHEMICAL
+                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique DRUG-DISEASE-CHEMICAL
 
                             nano_adj = NN_ADJ[diseaseIndex, :] * nano != 0
                             if (np.sum(nano_adj) > 0):
@@ -591,7 +591,7 @@ def searchDrugChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, disea
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (nano_drug & nano_chemical & drug_chemical):
                                             cliques_index = (nanoIndex, drugIndex, chemicalIndex)
@@ -601,7 +601,7 @@ def searchDrugChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, disea
                                             ADJ_sign[nanoIndex, drugIndex], ADJ_sign[nanoIndex, chemicalIndex],
                                             ADJ_sign[drugIndex, chemicalIndex])
                                             known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[drugIndex, chemicalIndex])
-                                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-CHEMICAL
+                                            cliques_NDrC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-CHEMICAL
 
 
     Cliques = {'NanoDrugDiseaseChemical': cliques_NDrDiC, 'NanoDrugDisease': cliques_NDrDi,
@@ -647,7 +647,7 @@ def searchDiseaseChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, di
                             cliques_names = ((elemName[nanoIndex], elemName[diseaseIndex], elemName[chemicalIndex]))
                             cliques_edges = ((ADJ_sign[nanoIndex, diseaseIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex]))
                             known_edges = (ADJ_known[nanoIndex, diseaseIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DISEASE-CHEMICAL
+                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DISEASE-CHEMICAL
 
                             # continuare
                             drug_adj = NN_ADJ[nanoIndex, :] * drug != 0
@@ -672,7 +672,7 @@ def searchDiseaseChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, di
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (drug_disease & drug_chemical & disease_chemical):
                                             cliques_index = (drugIndex, diseaseIndex, chemicalIndex)
@@ -680,7 +680,7 @@ def searchDiseaseChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, di
                                             elemName[drugIndex], elemName[diseaseIndex], elemName[chemicalIndex])
                                             cliques_edges = (ADJ_sign[drugIndex, diseaseIndex], ADJ_sign[drugIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                                             known_edges = (ADJ_known[drugIndex, diseaseIndex], ADJ_known[drugIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique DRUG-DISEASE-CHEMICAL
+                                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique DRUG-DISEASE-CHEMICAL
                 drug_adj = NN_ADJ[chemicalIndex, :] * drug != 0
                 if (np.sum(drug_adj) > 0):
                     drug_adj = [d for d in np.where(drug_adj == True)[0]]
@@ -696,7 +696,7 @@ def searchDiseaseChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, di
                             # Edges are in te order drug-disease drug-chem, disea-chem
                             cliques_edges = (ADJ_sign[drugIndex, diseaseIndex], ADJ_sign[drugIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                             known_edges = (ADJ_known[drugIndex, diseaseIndex], ADJ_known[drugIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique DRUG-DISEASE-CHEMICAL
+                            cliques_DrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique DRUG-DISEASE-CHEMICAL
                             nano_adj = NN_ADJ[chemicalIndex, :] * nano != 0
                             if (np.sum(nano_adj) > 0):
                                 nano_adj = [d for d in np.where(nano_adj == True)[0]]
@@ -720,7 +720,7 @@ def searchDiseaseChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, di
                                         known_edges = (ADJ_known[nanoIndex, drugIndex], ADJ_known[nanoIndex, diseaseIndex],
                                         ADJ_known[nanoIndex, chemicalIndex], ADJ_known[drugIndex, diseaseIndex],
                                         ADJ_known[drugIndex, chemicalIndex], ADJ_known[diseaseIndex, chemicalIndex]) 
-                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DRUG-DISEASE-CHEMICAL
+                                        cliques_NDrDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DRUG-DISEASE-CHEMICAL
 
                                         if (nano_disease & nano_chemical & disease_chemical):
                                             cliques_index = (nanoIndex, diseaseIndex, chemicalIndex)
@@ -728,7 +728,7 @@ def searchDiseaseChemical_2(NN_ADJ, ADJ_sign,ADJ_known, nano, drug, chemical, di
                                             elemName[nanoIndex], elemName[diseaseIndex], elemName[chemicalIndex])
                                             cliques_edges = (ADJ_sign[nanoIndex, diseaseIndex], ADJ_sign[nanoIndex, chemicalIndex],ADJ_sign[diseaseIndex, chemicalIndex])
                                             known_edges = (ADJ_known[nanoIndex, diseaseIndex], ADJ_known[nanoIndex, chemicalIndex],ADJ_known[diseaseIndex, chemicalIndex])
-                                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges))  # Clique NANO-DISEASE-CHEMICAL
+                                            cliques_NDiC.add((cliques_index, cliques_names,cliques_edges,known_edges,sum(known_edges)))  # Clique NANO-DISEASE-CHEMICAL
 
     Cliques = {'NanoDrugDiseaseChemical': cliques_NDrDiC, 'NanoDrugDisease': cliques_NDrDi,
                'NanoDrugChemical': cliques_NDrC, 'NanoDiseaseChemical': cliques_NDiC,
