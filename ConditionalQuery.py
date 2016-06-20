@@ -88,27 +88,27 @@ def ConditionalQuery(ADJ_rank, ADJ_sign,ADJ_known, indices, indicesBool, queryIn
     if minElems == 4:  # look for all quadruple of object in the input (one element for each class) and see if the form a clique
         CS4 = clique4(NN_ADJ, ADJ_sign, ADJ_known,queryInput, elemName)
         NS = networkStatistics(CS4, ADJ_sign, ADJ_known,indicesBool, elemName)
-        Res4 = {'cliques': CS4, 'nodes': NS['nodes'], 'edges': NS['edges']}
+        Res4 = {'cliques': CS4, 'nodes': NS['nodes'], 'edges': NS['edges'], 'knownCount': NS['knownCount']}
         return Res4
 
     if minElems == 3:
         CS3 = searchClique_3(NN_ADJ, ADJ_sign, ADJ_known,nNanoInput, nDrugInput, nChemicalInput, nDiseaseInput, nano, drug,
                              chemical, disease, queryInput, elemName)
         NS = networkStatistics(CS3, ADJ_sign, ADJ_known,indicesBool, elemName)
-        Res3 = {'cliques': CS3, 'nodes': NS['nodes'], 'edges': NS['edges']}
+        Res3 = {'cliques': CS3, 'nodes': NS['nodes'], 'edges': NS['edges'], 'knownCount': NS['knownCount']}
         return Res3
 
     if minElems == 2:
         CS2 = searchClique_2(NN_ADJ, ADJ_sign,ADJ_known, nNanoInput, nDrugInput, nChemicalInput, nDiseaseInput, nano, drug,
                              chemical, disease, queryInput, elemName)
         NS = networkStatistics(CS2, ADJ_sign, ADJ_known,indicesBool, elemName)
-        Res2 = {'cliques': CS2, 'nodes': NS['nodes'], 'edges': NS['edges']}
+        Res2 = {'cliques': CS2, 'nodes': NS['nodes'], 'edges': NS['edges'], 'knownCount': NS['knownCount']}
         return Res2
 
     if minElems == 1:  # if minElems==1 I have to search for all the cliques
         CS = cliqueSearch(NN_ADJ, ADJ_sign, ADJ_known,nano, drug, disease, chemical, queryInput, elemName)
         NS = networkStatistics(CS, ADJ_sign, ADJ_known, indicesBool, elemName)
-        Res = {'cliques': CS, 'nodes': NS['nodes'], 'edges': NS['edges']}
+        Res = {'cliques': CS, 'nodes': NS['nodes'], 'edges': NS['edges'], 'knownCount': NS['knownCount']}
         return Res
 
     return {'error': 'Input processing failed'}
